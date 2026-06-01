@@ -106,28 +106,37 @@ function AuthScreen({onLogin}){
 
 function UserMenu({session,onSignOut}){
   const [open,setOpen]=useState(false);
+  const [pos,setPos]=useState({top:54,right:12});
   const ref=useRef();
+  const btnRef=useRef();
   useEffect(()=>{
     if(!open)return;
     const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
     document.addEventListener("mousedown",h);return()=>document.removeEventListener("mousedown",h);
   },[open]);
+  const toggle=()=>{
+    if(!open&&btnRef.current){
+      const r=btnRef.current.getBoundingClientRect();
+      setPos({top:r.bottom+6, right:window.innerWidth-r.right});
+    }
+    setOpen(!open);
+  };
   const ini=session.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
   const cols=["#00c8ff","#f72585","#7b2fff","#06d6a0","#ffd166"];
   const uc=cols[session.name.charCodeAt(0)%cols.length];
   return(
     <div ref={ref} style={{position:"relative",flexShrink:0}}>
-      <button onClick={()=>setOpen(!open)} style={{display:"flex",alignItems:"center",gap:7,background:"transparent",border:"1px solid "+(open?"#00c8ff":"#1e2d4a"),borderRadius:10,padding:"5px 10px",cursor:"pointer"}}>
+      <button ref={btnRef} onClick={toggle} style={{display:"flex",alignItems:"center",gap:7,background:"transparent",border:"1px solid "+(open?"#00c8ff":C.border),borderRadius:10,padding:"5px 10px",cursor:"pointer"}}>
         <div style={{width:26,height:26,borderRadius:8,background:uc+"33",border:"1px solid "+uc+"55",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:uc}}>{ini}</div>
         <span style={{fontSize:12,fontWeight:700,color:C.text,maxWidth:80,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{session.name}</span>
-        <span style={{color:"#5a7a9e",fontSize:10}}>▾</span>
+        <span style={{color:C.muted,fontSize:10}}>▾</span>
       </button>
       {open&&(
-        <div style={{position:"fixed",top:58,right:16,width:200,background:"#0f1829",border:"1px solid #1e2d4a",borderRadius:14,overflow:"hidden",zIndex:9999,boxShadow:"0 16px 48px #00000099"}}>
-          <div style={{padding:"14px 16px",borderBottom:"1px solid #1e2d4a"}}>
+        <div style={{position:"fixed",top:pos.top,right:pos.right,width:210,background:C.nav,border:`1px solid ${C.border}`,borderRadius:14,overflow:"hidden",zIndex:9999,boxShadow:"0 16px 48px #00000066"}}>
+          <div style={{padding:"14px 16px",borderBottom:`1px solid ${C.border}`}}>
             <div style={{width:36,height:36,borderRadius:9,background:uc+"33",border:"1px solid "+uc+"55",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:uc,marginBottom:8}}>{ini}</div>
-            <div style={{fontSize:13,fontWeight:800,color:"#e8f0fe"}}>{session.name}</div>
-            <div style={{fontSize:11,color:"#5a7a9e",marginTop:2}}>{session.email}</div>
+            <div style={{fontSize:13,fontWeight:800,color:C.text}}>{session.name}</div>
+            <div style={{fontSize:11,color:C.muted,marginTop:2}}>{session.email}</div>
           </div>
           <button onClick={()=>{onSignOut();setOpen(false);}} style={{width:"100%",padding:"12px 16px",background:"transparent",border:"none",cursor:"pointer",color:"#ef476f",fontSize:13,fontWeight:700,fontFamily:"inherit",textAlign:"left",display:"flex",alignItems:"center",gap:8}}
             onMouseEnter={e=>e.currentTarget.style.background="#ef476f18"}
@@ -333,7 +342,7 @@ function ProjectDropdown({projects,activeId,onSelect,onCreate,onDelete}){
         <span style={{color:open?C.accent:C.muted,fontSize:11,marginLeft:2}}>▾</span>
       </button>
       {open&&(
-        <div ref={ref} style={{position:"fixed",top:pos.top,left:pos.left,width:280,background:"#0f1829",border:`2px solid ${C.accent}55`,borderRadius:16,zIndex:9999,boxShadow:"0 24px 64px #00000099",overflow:"hidden"}}>
+        <div ref={ref} style={{position:"fixed",top:pos.top,left:pos.left,width:280,background:C.nav,border:`2px solid ${C.accent}55`,borderRadius:16,zIndex:9999,boxShadow:"0 24px 64px #00000044",overflow:"hidden"}}>
           <div style={{padding:"12px 16px 8px",borderBottom:`1px solid ${C.border}`,fontSize:10,color:C.muted,fontWeight:700,letterSpacing:1.5}}>프로젝트 목록</div>
           <div style={{maxHeight:320,overflowY:"auto"}}>
             {projects.map(p=>(
@@ -394,7 +403,7 @@ function SettingsModal({proj,onUpdate,onClose}){
     <div style={{position:"fixed",inset:0,zIndex:9999,display:"flex",alignItems:"center",justifyContent:"center"}}
       onClick={e=>{if(e.target===e.currentTarget)onClose();}}>
       <div style={{position:"absolute",inset:0,background:"#00000088",backdropFilter:"blur(4px)"}}/>
-      <div style={{position:"relative",background:"#0f1829",border:`1px solid ${C.border}`,borderRadius:20,padding:28,width:"min(500px,92vw)",maxHeight:"90vh",overflowY:"auto",boxShadow:"0 32px 80px #00000099",zIndex:1}}>
+      <div style={{position:"relative",background:C.nav,border:`1px solid ${C.border}`,borderRadius:20,padding:28,width:"min(500px,92vw)",maxHeight:"90vh",overflowY:"auto",boxShadow:"0 32px 80px #00000099",zIndex:1}}>
 
         {/* 헤더 */}
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:22}}>
